@@ -34,6 +34,7 @@ _TLD_SERVERS = {
     "jp":  "whois.jprs.jp",
     "cn":  "whois.cnnic.cn",
     "ru":  "whois.tcinet.ru",
+    "eu":  "whois.eu",
 }
 
 _IP_WHOIS_SERVER = "whois.arin.net"
@@ -94,24 +95,52 @@ def _extract_key_fields(raw: str) -> list[str]:
     """Pull useful fields out of the raw whois blob."""
     fields: list[str] = []
     interesting = (
-        "domain name", "registrar", "registrant", "creation date",
-        "updated date", "expir", "name server", "status",
-        "org", "orgname", "netrange", "cidr", "netname",
-        "country", "descr", "admin-c", "tech-c", "abuse",
+        "domain name", "domain", "registrar", "registrant",
+        "creation date", "created", "updated date", "expir",
+        "name server", "status",
+        "org", "orgname", "organisation", "organization",
+        "netrange", "cidr", "netname",
+        "country", "descr", "admin-c", "tech-c", "technical", "abuse",
+        "email", "e-mail", "script",
     )
     seen: set[str] = set()
-    for line in raw.splitlines():
+    lines = raw.splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
         line_stripped = line.strip()
         if not line_stripped or line_stripped.startswith("%") or line_stripped.startswith("#"):
+            i += 1
             continue
         low = line_stripped.lower()
-        for key in interesting:
-            if low.startswith(key):
-                # De-duplicate identical lines
-                if line_stripped not in seen:
-                    seen.add(line_stripped)
-                    fields.append(line_stripped)
-                break
+        matched = any(low.startswith(key) for key in interesting)
+        if not matched:
+            i += 1
+            continue
+
+        if line_stripped not in seen:
+            seen.add(line_stripped)
+            fields.append(line_stripped)
+
+        # If this is a section header (value-less "Key:"), collect the
+        # indented continuation lines that belong to it.
+        colon_pos = line_stripped.find(":")
+        if colon_pos != -1 and not line_stripped[colon_pos + 1:].strip():
+            i += 1
+            while i < len(lines):
+                next_line = lines[i]
+                next_stripped = next_line.strip()
+                if not next_stripped:
+                    break  # blank line ends the section
+                if next_line[0] not in (" ", "\t"):
+                    break  # non-indented line = new section
+                if next_stripped not in seen:
+                    seen.add(next_stripped)
+                    fields.append(f"  {next_stripped}")
+                i += 1
+            continue
+
+        i += 1
     return fields
 
 
