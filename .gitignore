@@ -1,0 +1,19 @@
+# Cache and Temporary Files
+*/__pycache__/*
+*.pyc
+*.pyo
+*.pyd
+*.cache
+*.tmp
+*.log
+
+# Python Virtual Environment
+.venv/
+
+# Logs & Reports
+ntt_logs/*
+ntt_reports/*
+
+# Except .gitkeep files to keep the directories in version control
+!ntt_logs/.gitkeep
+!ntt_reports/.gitkeep
