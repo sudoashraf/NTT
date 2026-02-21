@@ -6,23 +6,6 @@ Supports **Windows**, **Linux**, and **macOS**.
 
 ---
 
-## Demo
-
-<!-- To play locally: asciinema play demo.cast -->
-<!-- To upload & get an embed link: asciinema upload demo.cast -->
-[![asciicast](https://asciinema.org/a/RECORDING_ID.svg)](https://asciinema.org/a/RECORDING_ID)
-
-> **Tip:** You can also play the recording locally:
-> ```bash
-> # Install asciinema if you haven't already
-> pip install asciinema
->
-> # Play the demo
-> asciinema play demo.cast
-> ```
-
----
-
 ## Features
 
 ### 🌐 Connectivity & Reachability
@@ -178,6 +161,12 @@ ntt export csv -o report.csv
 ## Session Logging
 
 Every test result is automatically logged to a JSON-lines file in the `ntt_logs/` directory. Each interactive session creates a new timestamped log file. Use **Export Results** (option 17) or the `ntt export` command to save results as JSON, CSV, or HTML reports to the `ntt_reports/` directory.
+
+---
+
+## Demo
+
+![NTT Demo](demo.gif)
 
 ---
 
