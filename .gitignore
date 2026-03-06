@@ -10,6 +10,9 @@
 # Python Virtual Environment
 .venv/
 
+# Build Artifacts
+*.egg-info/
+
 # Logs & Reports
 ntt_logs/*
 ntt_reports/*
